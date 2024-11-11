@@ -1,9 +1,26 @@
-const clientId = "";
-const clientSecret = "";
+const clientId = import.meta.env.VITE_CLIENT_ID;
+const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
 const tokenEndpoint = "https://accounts.spotify.com/api/token";
 
+export type Track = {
+  artists: { name: string }[];
+  available_markets: string[];
+  disc_number: number;
+  duration_ms: number;
+  explicit: boolean;
+  external_urls: { spotify: string };
+  href: string;
+  id: string;
+  name: string;
+  track_number: number;
+  type: string;
+  uri: string;
+  is_local: boolean;
+  preview_url?: string;
+};
+
 type TracksResponse = {
-  items: { track: { name: string; preview_url?: string } }[];
+  items: { track: Track }[];
 };
 
 type ArtistResponse = {
@@ -36,9 +53,7 @@ export const getTracksByPlaylistId = async (id: string, token: string) => {
     },
   });
   const data = (await res.json()) as TracksResponse;
-  return data.items.map(
-    (item) => [item.track.name, item.track.preview_url] as const
-  );
+  return data.items.map((item) => item.track);
 };
 
 export const getArtistById = async (id: string, token: string) => {
@@ -72,22 +87,7 @@ export const getTracksByAlbumIds = async (ids: string[], token: string) => {
     )
   );
   const data = await Promise.all<{
-    items: {
-      artists: { name: string }[];
-      available_markets: string[];
-      disc_number: number;
-      duration_ms: number;
-      explicit: boolean;
-      external_urls: { spotify: string };
-      href: string;
-      id: string;
-      name: string;
-      track_number: number;
-      type: string;
-      uri: string;
-      is_local: boolean;
-      preview_url?: string;
-    }[];
+    items: Track[];
   }>(
     res.map((r) => {
       return r.json();
@@ -95,7 +95,7 @@ export const getTracksByAlbumIds = async (ids: string[], token: string) => {
   );
 
   return data.flatMap((d) =>
-    d.items.map((item) => [item.name, item.preview_url] as const)
+    d.items.map((item) => item).filter((item) => item.preview_url)
   );
 };
 
