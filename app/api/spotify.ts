@@ -53,7 +53,9 @@ export const getTracksByPlaylistId = async (id: string, token: string) => {
     },
   });
   const data = (await res.json()) as TracksResponse;
-  return data.items.map((item) => item.track);
+  return data.items
+    .map((item) => item.track)
+    .filter((item) => item.preview_url);
 };
 
 export const getArtistById = async (id: string, token: string) => {

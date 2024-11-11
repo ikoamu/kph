@@ -11,6 +11,7 @@ export default function Q(props: { quizList: Quiz[] }) {
       {quiz.options.map((option) => (
         <button>{option.text}</button>
       ))}
+      {JSON.stringify(quiz, null, 2)}
     </div>
   )
 }

@@ -14,6 +14,7 @@ export function createQuiz(tracks: Track[]): Quiz[] {
   const shuffledTracks = [...tracks].sort(() => Math.random() - 0.5);
   const quizzes: Quiz[] = [];
   for (let i = 0; i < shuffledTracks.length; i += 4) {
+    if (i + 3 >= shuffledTracks.length) break;
     const correctTrack = shuffledTracks[i];
     const options = [
       { text: correctTrack.name, isCorrect: true },
